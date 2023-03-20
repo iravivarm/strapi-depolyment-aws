@@ -41,5 +41,5 @@ variable "fargate_memory" {
   description = "Fargate instance memory to provision (in MiB)"
   default     = "2048"
 }
-# variable "tag" {
-# }
+variable "tag" {
+}

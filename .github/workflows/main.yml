@@ -16,7 +16,7 @@ jobs:
 
      - name: Set Relase version
        id: vars
-       run: echo "::set-output name=tag::${GITHUB_REF#refs/*/}"
+       run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
        
      - name: Configure AWS credential
        uses: aws-actions/configure-aws-credentials@v1
@@ -34,16 +34,23 @@ jobs:
        env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: strapiapp
-          IMAGE_TAG: ${{ steps.increment-git-tag.outputs.git-tag  }}
+          IMAGE_TAG: ${{ github.event.head_commit.message }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
        run: |
           echo $IMAGE_TAG
+          $(aws ecr get-login --no-include-email --region ap-south-1)
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-ouhttps://axellarsson.com/blog/github-actions-build-docker-image-and-push-to-private-registry/tput name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+     - name: Check tag version
+       run: | 
+           echo $RELEASE_VERSION
+           echo ${{ env.RELEASE_VERSION }}
+           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
 
      - name: terraform initialization 
        run: cd strapi-terraform/ && terraform init 
@@ -52,4 +59,4 @@ jobs:
        run: cd strapi-terraform/ && terraform validate
 
      - name: terraform deployment
-       run: cd strapi-terraform/ && terraform apply -auto-approve
+       run: cd strapi-terraform/ && terraform apply -var="tag=${{ env.RELEASE_VERSION }}" -auto-approve
