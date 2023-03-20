@@ -3,7 +3,7 @@ resource "aws_ecs_cluster" "main" {
 }
 data "aws_ecr_repository" "strapiapp"{
 name = "strapiapp"
-# image_tag_mutability = "IMMUTABLE"
+image_tag_mutability = "IMMUTABLE"
 }
 data "template_file" "strapi_app" {
   template = file("./templates/app.json.tpl")
