@@ -28,6 +28,13 @@ jobs:
      - name: Login to Amazon ECR
        id: login-ecr
        uses: aws-actions/amazon-ecr-login@v1
+       
+     - name: Check tag version
+       run: | 
+           echo $RELEASE_VERSION
+           echo ${{ env.RELEASE_VERSION }}
+           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
+           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
  
      - name: Build, tag, and push image to Amazon ECRs
        id: build-image
@@ -46,14 +53,6 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
-          
-     - name: Check tag version
-       run: | 
-           echo $RELEASE_VERSION
-           echo ${{ env.RELEASE_VERSION }}
-           echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
-           echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
 
      - name: terraform initialization 
        run: cd strapi-terraform/ && terraform init 
