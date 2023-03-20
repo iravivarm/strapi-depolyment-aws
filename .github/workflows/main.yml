@@ -37,7 +37,6 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
        run: |
           echo $IMAGE_TAG
-          $(aws ecr get-login --registry-ids 436939330769 --region ap-south-1 --no-include-email)
           docker build -t ${{ secrets.ECR_REPO_NAME }}/strapiapp:${{ env.RELEASE_VERSION  }} .
           docker push ${{ secrets.ECR_REPO_NAME }}/strapiapp:${{ env.RELEASE_VERSION }}
           echo "::set-ouhttps://axellarsson.com/blog/github-actions-build-docker-image-and-push-to-private-registry/tput name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
