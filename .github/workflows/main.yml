@@ -32,7 +32,6 @@ jobs:
 
      - name: build docker image and push to ecr repo
        run: |
-          $(aws ecr get-login --no-include-email --region ap-south-1)
           docker build -t ${{ secrets.ECR_REPO_NAME }}/strapiapp:${{ env.RELEASE_VERSION  }} -f strapi-app-project/Dockerfile
           docker push ${{ secrets.ECR_REPO_NAME }}/strapiapp:${{ env.RELEASE_VERSION }}
        env:
