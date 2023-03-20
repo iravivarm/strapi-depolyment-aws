@@ -40,6 +40,8 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
        run: |
           echo $IMAGE_TAG
+          cd strapi-terraform/ && terraform init 
+          terraform destroy -auto-approve -input=false
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
@@ -51,8 +53,12 @@ jobs:
            echo ${{ env.RELEASE_VERSION }}
            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
-           
+
      - name: terraform initialization 
        run: cd strapi-terraform/ && terraform init 
+
+     - name: Terraform validation
+       run: cd strapi-terraform/ && terraform validate
+       
      - name: terraform deployment
        run: cd strapi-terraform/ && terraform apply -var="tag=${{ env.RELEASE_VERSION }}"  -auto-approve
