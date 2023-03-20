@@ -2,8 +2,8 @@ name: workflow
 
 on:
   push:
-    tags:
-    - '*'
+    branches:
+      - "main"
   workflow_dispatch:
 
 jobs:
@@ -40,7 +40,8 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
        run: |
           echo $IMAGE_TAG
-          cd strapi-terraform/ && terraform init 
+          echo ${{ env.RELEASE_VERSION }}
+          cd strapi-terraform/ && terraform init -var="tag=${{ env.RELEASE_VERSION }}"
           terraform destroy -auto-approve -input=false
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
@@ -59,6 +60,6 @@ jobs:
 
      - name: Terraform validation
        run: cd strapi-terraform/ && terraform validate
-       
+
      - name: terraform deployment
        run: cd strapi-terraform/ && terraform apply -var="tag=${{ env.RELEASE_VERSION }}"  -auto-approve
