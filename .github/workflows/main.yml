@@ -63,4 +63,4 @@ jobs:
        run: cd strapi-terraform/ && terraform validate
 
      - name: terraform deployment
-       run: cd strapi-terraform/ && terraform apply -var="tag=${{ env.RELEASE_VERSION }}"  -auto-approve
+       run: cd strapi-terraform/ && terraform apply -auto-approve
