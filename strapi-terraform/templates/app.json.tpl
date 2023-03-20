@@ -2,7 +2,7 @@
 [
   {
     "name": "strapiapp",
-    "image": "${app_image},
+    "image": "${app_image}",
     "cpu": ${fargate_cpu},
     "memory": ${fargate_memory},
     "networkMode": "awsvpc",
