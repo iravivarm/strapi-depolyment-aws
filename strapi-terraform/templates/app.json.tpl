@@ -1,7 +1,7 @@
 
 [
   {
-    "name": "strapiapp",
+    "name": "strapi-app",
     "image": "${app_image}",
     "cpu": ${fargate_cpu},
     "memory": ${fargate_memory},
