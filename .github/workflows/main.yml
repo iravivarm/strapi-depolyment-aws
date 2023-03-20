@@ -53,7 +53,7 @@ jobs:
            echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> $GITHUB_ENV
            echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> $GITHUB_ENV
      - name: terraform initialization 
-       run: cd strapi-terraform/ && terraform init 
+       run: cd strapi-terraform/ && terraform init -var="tag=${{ env.RELEASE_VERSION }}
 
      - name: Terraform validation
        run: cd strapi-terraform/ && terraform validate
